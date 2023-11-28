@@ -1,0 +1,15 @@
+.chat-history-container {
+    height: 80vh;
+}
+
+.message-listing {
+    padding: 0.5rem 1rem;
+    height: 80vh;
+    display: flex;
+    overflow: auto;
+    flex-direction: column-reverse;
+}
+
+.max-width {
+    max-width: 50rem !important;
+}
