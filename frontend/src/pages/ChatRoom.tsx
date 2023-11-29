@@ -2,7 +2,7 @@ import ChatBox from "../components/chat/ChatBox";
 
 const ChatRoom = () => {
     return (
-        <div className="col m-auto p-3 max-width mt-4">
+        <div className="col m-auto p-3 max-width my-4">
             <ChatBox />
         </div>
     );

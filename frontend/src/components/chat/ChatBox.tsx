@@ -6,28 +6,36 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState, useEffect } from "react";
 import { socket } from "../../socket";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ChatBox = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const [currentMessage, setCurrentMessage] = useState("");
     const [messages, setMessages] = useState([]);
-    const [currentRoom, setCurrentRoom] = useState("");
-
-    const navigate = useNavigate();
+    const [room, setRoom] = useState(location?.state?.room || "");
+    const [username, setUsername] = useState(location?.state?.username || "");
 
     useEffect(() => {
-        socket.on("connect", () => console.log("CONNECTED"));
-        socket.on("chat", pushMessage);
+        if (!location.state.room || !location.state.username) {
+            navigate("/");
+        } else {
+            socket.on("connect", () => console.log("CONNECTED"));
+            socket.emit("joinRoom", room);
+            socket.on("receiveMessage", pushMessage);
+        }
 
         return () => {
             socket.off("connect");
-            socket.off("chat", pushMessage);
+            socket.off("receiveMessage", pushMessage);
         };
     }, []);
 
     type Message = {
         from: string;
         content: string;
+        room: string;
     };
 
     const pushMessage = (message: Message) => {
@@ -38,15 +46,17 @@ const ChatBox = () => {
         e.preventDefault();
         console.log("Client message: ", currentMessage);
         const message: Message = {
-            from: "Me",
+            from: username,
             content: currentMessage,
+            room: room,
         };
         pushMessage(message);
-        socket.emit("chat", message);
+        socket.emit("sendMessage", message);
         console.log("MESSAGES: ", messages);
     };
 
     const handleBackToMenu = () => {
+        socket.emit("leaveRoom", room);
         navigate("/");
     };
 
@@ -56,8 +66,8 @@ const ChatBox = () => {
                 <Button variant="outline-secondary" onClick={handleBackToMenu}>
                     Back to Menu
                 </Button>
-                {currentRoom ? (
-                    <p className="align-self-center m-0">Room: {currentRoom}</p>
+                {room ? (
+                    <p className="align-self-center m-0">Room: {room}</p>
                 ) : (
                     <p className="align-self-center m-0">Room: none</p>
                 )}
