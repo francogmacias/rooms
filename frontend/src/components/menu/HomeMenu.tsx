@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../../socket";
 
 const HomeMenu = () => {
     const [username, setUsername] = useState("");
@@ -19,7 +20,14 @@ const HomeMenu = () => {
         });
     };
 
-    const handleJoinNewRoom = () => {};
+    const handleJoinNewRoom = () => {
+        navigate("/room", {
+            state: {
+                username: username,
+                room: socket.id + "#" + crypto.randomUUID(),
+            },
+        });
+    };
 
     return (
         <div>
@@ -46,7 +54,11 @@ const HomeMenu = () => {
                     Join
                 </Button>
             </InputGroup>
-            <Button variant="outline-secondary" id="button-addon1">
+            <Button
+                variant="outline-secondary"
+                id="button-addon1"
+                onClick={handleJoinNewRoom}
+            >
                 Join New Room
             </Button>
         </div>
