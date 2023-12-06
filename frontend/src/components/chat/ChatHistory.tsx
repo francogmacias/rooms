@@ -1,6 +1,6 @@
 import "./ChatStyles.css";
 
-const ChatHistory = (props) => {
+const ChatHistory = (props: any) => {
     type Message = {
         from: string;
         content: string;

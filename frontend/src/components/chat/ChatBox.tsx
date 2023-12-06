@@ -1,10 +1,9 @@
 import Stack from "react-bootstrap/Stack";
 import ChatHistory from "./ChatHistory";
-import ChatInput from "./ChatInput";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
-import { useState, useEffect } from "react";
+import { useState, useEffect, SyntheticEvent } from "react";
 import { socket } from "../../socket";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -13,12 +12,12 @@ const ChatBox = () => {
     const location = useLocation();
 
     const [currentMessage, setCurrentMessage] = useState("");
-    const [messages, setMessages] = useState([]);
-    const [room, setRoom] = useState(location?.state?.room || "");
-    const [username, setUsername] = useState(location?.state?.username || "");
+    const [messages, setMessages] = useState<Message[]>([]);
+    const room = location?.state?.room || null;
+    const username = location?.state?.username || null;
 
     useEffect(() => {
-        if (!location.state.room || !location.state.username) {
+        if (!room || !username) {
             navigate("/");
         } else {
             socket.on("connect", () => console.log("CONNECTED"));
@@ -32,17 +31,11 @@ const ChatBox = () => {
         };
     }, []);
 
-    type Message = {
-        from: string;
-        content: string;
-        room: string;
-    };
-
     const pushMessage = (message: Message) => {
         setMessages((state) => [...state, message]);
     };
 
-    const handleOnSubmit = (e) => {
+    const handleOnSubmit = (e: SyntheticEvent) => {
         e.preventDefault();
         console.log("Client message: ", currentMessage);
         const message: Message = {
