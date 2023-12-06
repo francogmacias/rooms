@@ -4,7 +4,9 @@ import { Server, Socket } from "socket.io";
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, { cors: { origin: "http://localhost:5173" } });
+const io = new Server(server, {
+    cors: { origin: "https://rooms-frontend.onrender.com" },
+});
 
 app.get("/", (req, res) => {
     res.send("<h1>Hello world</h1>");
